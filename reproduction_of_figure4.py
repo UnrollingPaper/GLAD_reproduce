@@ -7,15 +7,15 @@ from data_generator_glad import *
 import pickle as pkl
 
 K_train = 10 # 10
-M = 100
-N = 100 # number of features
+M = 100 # number of samples
+N = 36 # number of features 100
 graph_type = "random_maxd"
 SAMPLE_BATCHES = 10
-w_min = -1
-w_max = 1
+w_min = 0.1
+w_max = 0.4
 SIGNS = 0
 K_test = 100 # 100
-prob = 0.1
+prob = 0.05
 MAX_DEG = 50
 K_valid = 10
 data_path = "./data/syn/Ktrain{}_Ktest{}_M{}_N{}_prob{}.pkl".format(K_train, K_test, M, N, prob)
@@ -88,7 +88,7 @@ H = 3
 init_lr = 0.001
 use_optimizer = 'adam'
 batch_size = 1
-train_epochs = 40
+train_epochs = 1
 INIT_DIAG = 0
 lossBCE = 0
 loss_signed = 0
@@ -498,6 +498,7 @@ def glasso_predict(model, data, flagP=False, SAVE_GRAPH=False, eM=0, name='', mn
             theta_true_b = theta_true_b.data.cpu().numpy()
 
             fdr, tpr, fpr, shd, nnz, nnz_true, ps = metrics.report_metrics(theta_true_b, theta_pred)
+            print("ps:", ps)
             cond_theta_pred, cond_theta_true_b = np.linalg.cond(theta_pred), -1  # np.linalg.cond(theta_true_b)
             res.append([fdr, tpr, fpr, shd, nnz, nnz_true, ps, cond_theta_pred, cond_theta_true_b])
 
@@ -514,12 +515,12 @@ def glasso_predict(model, data, flagP=False, SAVE_GRAPH=False, eM=0, name='', mn
             print(*sum(list(map(list, zip(res_mean, res_std))), []), sep=', ')
 
             # print('ITR, conv.loss, obj_val_pred, obj_val_true_model_rho, obj_val_pred_args_rho')#, theta_pred)
-            print(
-                'ITR, conv_loss"ecoli_M"+str(eM), obj_val_pred, obj_val_true_model_rho, obj_val_pred_args_rho, conv_loss_off_diag')  # , theta_pred)
-            for i in res_conv:
-                mean_vec = ["%.3f" % x for x in np.mean(res_conv[i], 0)]
-                std_vec = ["%.3f" % x for x in np.std(res_conv[i], 0)]
-                print(i, *sum(list(map(list, zip(mean_vec, std_vec))), []), sep=', ')
+            # print(
+            #     'ITR, conv_loss"ecoli_M"+str(eM), obj_val_pred, obj_val_true_model_rho, obj_val_pred_args_rho, conv_loss_off_diag')  # , theta_pred)
+            # for i in res_conv:
+            #     mean_vec = ["%.3f" % x for x in np.mean(res_conv[i], 0)]
+            #     std_vec = ["%.3f" % x for x in np.std(res_conv[i], 0)]
+            #     print(i, *sum(list(map(list, zip(mean_vec, std_vec))), []), sep=', ')
         #            print(i, np.mean(res_conv[i], 0), np.std(res_conv[i], 0))
 
         if SAVE_GRAPH:

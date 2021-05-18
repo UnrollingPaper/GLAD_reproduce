@@ -114,11 +114,22 @@ def get_frobenius_norm(A, single=False):
     return torch.mean(torch.sum(A**2, (1,2)))
 
 
+def get_frobenius_norm_except_diag(A, single=False):
+    v = torch.zeros_like(A)
+    if single:
+        mask = torch.diag_embed(torch.ones((A.shape[2]))).cuda()
+        A = mask * v + (1. - mask) * A
+        return torch.sum(A**2)
+    mask = torch.diag_embed(torch.ones((A.shape[0], A.shape[2]))).cuda()
+    A = mask * v + (1. - mask) * A
+    return torch.mean(torch.sum(A ** 2, (1, 2)))
+
 def get_convergence_loss(theta_pred, theta_true):
     num = get_frobenius_norm(theta_pred - theta_true, single=True)
     den = get_frobenius_norm(theta_true, single=True)
-    #print('n d ', num, den)
-    return 10*torch.log10(num/den).data.cpu().numpy(), num/den
+    num1 = get_frobenius_norm_except_diag(theta_pred - theta_true, single=True)
+    den1 = get_frobenius_norm_except_diag(theta_true, single=True)
+    return 10*torch.log10(num/den).data.cpu().numpy(), (num/den).data.cpu().numpy(), num, den, (num1/den1).data.cpu().numpy(), num1, den1
 
 def logdet_torch(A):
     #return torch.log(torch.det(A))
