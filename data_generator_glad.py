@@ -68,7 +68,7 @@ class create_MN_vary_w(object):
         print('Total test graphs for edge recovery = ', k * batches + b)
         print('different w_values used: ', self.collect_w)
 
-    def init_random_graph(self, graph_type, seed=None, u=1):  # init random adjacency matrix with probability as p
+    def init_random_graph(self, graph_type, seed=None, u=0.1):  # init random adjacency matrix with probability as p
         # create a graph of given type\
         #        true_graph = nx.generators.random_graphs.gnp_random_graph(self.n, prob, seed=seed, directed=False)
         if graph_type == 'grid':
@@ -106,6 +106,7 @@ class create_MN_vary_w(object):
             """
             smallest_eigval = np.min(np.linalg.eigvals(theta))
             precision_mat = theta + np.eye(self.n) * (np.abs(smallest_eigval) + u)  # + 0.1 + u)
+            print("check smallest_eigval:", smallest_eigval)
         else:
             w_val = np.random.uniform(self.w_min, self.w_max)
             precision_mat = w_val * theta + np.eye(self.n)  # *(np.abs(smallest_eigval)+ u)# + 0.1 + u)
@@ -184,7 +185,7 @@ class create_MN_random(object):
         print('different w_values used: ', self.collect_p)
 
     # procedure of getting samples from gene generator
-    def init_random_graph_gene(self, u=1, w_val=0.5, seed=None):
+    def init_random_graph_gene(self, u=0.1, w_val=0.5, seed=None):
         if seed != None:
             np.random.seed(seed)
         prob = np.random.uniform(self.p_min, self.p_max)  # defining the graph sparsityi
@@ -205,7 +206,7 @@ class create_MN_random(object):
         #        print('smallest eval before I: ', smallest_eigval)
         # precision_mat = theta + np.eye(self.n)*(np.abs(smallest_eigval)+ u)# + 0.1 + u)
         precision_mat = theta + np.eye(self.n) * (u - smallest_eigval)  # + 0.1 + u)
-        #        print('check smallest eval = %.3f '%(np.min(np.linalg.eigvals(precision_mat))), ' sparsity = %.3f' %(1-np.count_nonzero(precision_mat==0)/(self.n*self.n)), ' condition number = %.3f ' %(np.linalg.cond(precision_mat)))
+        print('check smallest eval = %.3f '%(np.min(np.linalg.eigvals(precision_mat))), ' sparsity = %.3f' %(1-np.count_nonzero(precision_mat==0)/(self.n*self.n)), ' condition number = %.3f ' %(np.linalg.cond(precision_mat)))
         #        print('adjacency matrix:', theta, np.sum(theta), 'prob = ', prob)
         #        print('precision matrix:', precision_mat)
         #        cov = np.linalg.inv(precision_mat) # avoiding the use of pinv as data not true representative of conditional independencies.

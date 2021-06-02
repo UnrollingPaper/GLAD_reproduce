@@ -125,10 +125,10 @@ def get_frobenius_norm_except_diag(A, single=False):
     return torch.mean(torch.sum(A ** 2, (1, 2)))
 
 def get_convergence_loss(theta_pred, theta_true):
-    num = get_frobenius_norm(theta_pred - theta_true, single=True)
-    den = get_frobenius_norm(theta_true, single=True)
-    num1 = get_frobenius_norm_except_diag(theta_pred - theta_true, single=True)
-    den1 = get_frobenius_norm_except_diag(theta_true, single=True)
+    num = get_frobenius_norm(theta_pred - theta_true, single=False)
+    den = get_frobenius_norm(theta_true, single=False)
+    num1 = get_frobenius_norm_except_diag(theta_pred - theta_true, single=False)
+    den1 = get_frobenius_norm_except_diag(theta_true, single=False)
     return 10*torch.log10(num/den).data.cpu().numpy(), (num/den).data.cpu().numpy(), num, den, (num1/den1).data.cpu().numpy(), num1, den1
 
 def logdet_torch(A):
